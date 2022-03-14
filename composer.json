@@ -1,0 +1,20 @@
+{
+    "name": "secgin/phalcon-plugins",
+    "description": "Phalcon framework plugins",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "YG\\Phalcon\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Seçgin ŞANLI",
+            "email": "secginsanli@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4.0"
+    }
+}
