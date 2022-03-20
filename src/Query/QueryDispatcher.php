@@ -70,12 +70,17 @@ final class QueryDispatcher implements QueryDispatcherInterface
             $reflection = new \ReflectionClass($query);
             $queryClassShortName = $reflection->getShortName();
             $queryHandlerClass = $this->prefixQueryHandlerNamespace . '\\' . $queryClassShortName . 'QueryHandler';
-            
+
             if (class_exists($queryHandlerClass))
                 return new $queryHandlerClass;
 
-            throw new \Exception('Not Found Query Handler('.$queryHandlerClass.')');
+            //throw new \Exception('Not Found Query Handler(' . $queryHandlerClass . ')');
         }
+
+        $queryClassName = get_class($query);
+        $queryHandlerClassName = str_replace('Queries\\', 'QueryHandlers\\', $queryClassName) . "QueryHandler";
+        if (class_exists($queryHandlerClassName))
+            return new $queryHandlerClassName;
 
         return null;
     }

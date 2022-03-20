@@ -5,7 +5,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "YG\\Phalcon\\": "src/"
+            "YG\\Phalcon\\": "src/",
+            "YG\\Test\\": "test/"
         }
     },
     "authors": [
