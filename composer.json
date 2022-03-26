@@ -16,5 +16,10 @@
         }
     ],
     "require": {
+        "php": ">=7.4",
+        "ext-phalcon": "~4.1.2"
+    },
+    "require-dev": {
+        "phalcon/ide-stubs": "^4.1"
     }
 }

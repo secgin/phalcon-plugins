@@ -2,10 +2,11 @@
 
 namespace YG\Phalcon\Command;
 
+use Phalcon\Di\Injectable;
 use YG\Phalcon\IResult;
 use YG\Phalcon\Result;
 
-final class CommandDispatcher implements CommandDispatcherInterface
+final class CommandDispatcher extends Injectable implements CommandDispatcherInterface
 {
 
     private array $handlers = [];
@@ -45,7 +46,7 @@ final class CommandDispatcher implements CommandDispatcherInterface
         }
         catch (\Exception $ex)
         {
-            return Result::fail('Bir hata oluştu.' . $ex->getMessage());
+            return Result::fail($ex->getMessage());
         }
     }
 
@@ -73,6 +74,15 @@ final class CommandDispatcher implements CommandDispatcherInterface
             return $this->handlers[$commandClass];
         }
 
+        $annotations = $this->annotations->get($commandClass);
+        $classAnnotations = $annotations->getClassAnnotations();
+        if ($classAnnotations->has('Handler'))
+        {
+            $commandHandlerClass = $classAnnotations->get('Handler')->getArgument(0);
+            $this->handlers[$commandClass] = new $commandHandlerClass;
+            return $this->handlers[$commandClass];
+        }
+
         if ($this->prefixCommandHandlerNamespace != null)
         {
             $reflection = new \ReflectionClass($command);
@@ -81,9 +91,11 @@ final class CommandDispatcher implements CommandDispatcherInterface
 
             if (class_exists($commandHandlerClass))
                 return new $commandHandlerClass;
-
-            return null;
         }
+
+        $commandHandlerClassName = str_replace('Commands\\', 'CommandHandlers\\', $commandClass) . "CommandHandler";
+        if (class_exists($commandHandlerClassName))
+            return new $commandHandlerClassName;
 
         return null;
     }

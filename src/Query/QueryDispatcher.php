@@ -2,7 +2,9 @@
 
 namespace YG\Phalcon\Query;
 
-final class QueryDispatcher implements QueryDispatcherInterface
+use Phalcon\Di\Injectable;
+
+final class QueryDispatcher extends Injectable implements QueryDispatcherInterface
 {
     private array $handlers = [];
 
@@ -48,9 +50,6 @@ final class QueryDispatcher implements QueryDispatcherInterface
         $this->handlerClasses = array_merge($this->handlerClasses, $handlers);
     }
 
-    /**
-     * @throws \Exception
-     */
     private function getQueryHandler(AbstractQuery $query): ?AbstractQueryHandler
     {
         $queryClass = get_class($query);
@@ -65,6 +64,15 @@ final class QueryDispatcher implements QueryDispatcherInterface
             return $this->handlers[$queryClass];
         }
 
+        $annotations = $this->annotations->get($queryClass);
+        $classAnnotations = $annotations->getClassAnnotations();
+        if ($classAnnotations->has('Handler'))
+        {
+            $queryHandlerClass = $classAnnotations->get('Handler')->getArgument(0);
+            $this->handlers[$queryClass] = new $queryHandlerClass;
+            return $this->handlers[$queryClass];
+        }
+
         if ($this->prefixQueryHandlerNamespace != null)
         {
             $reflection = new \ReflectionClass($query);
@@ -73,12 +81,9 @@ final class QueryDispatcher implements QueryDispatcherInterface
 
             if (class_exists($queryHandlerClass))
                 return new $queryHandlerClass;
-
-            //throw new \Exception('Not Found Query Handler(' . $queryHandlerClass . ')');
         }
 
-        $queryClassName = get_class($query);
-        $queryHandlerClassName = str_replace('Queries\\', 'QueryHandlers\\', $queryClassName) . "QueryHandler";
+        $queryHandlerClassName = str_replace('Queries\\', 'QueryHandlers\\', $queryClass) . "QueryHandler";
         if (class_exists($queryHandlerClassName))
             return new $queryHandlerClassName;
 
