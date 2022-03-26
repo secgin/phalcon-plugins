@@ -37,7 +37,10 @@ final class QueryDispatcher extends Injectable implements QueryDispatcherInterfa
         if (method_exists($queryHandler, $queryClassShortName))
             return $queryHandler->$queryClassShortName($query);
 
-        return $queryHandler->handle($query);
+        if (method_exists($queryHandler, 'handle'))
+            return $queryHandler->handle($query);
+
+        return null;
     }
 
     public function register(string $queryClass, string $queryHandlerClass): void
@@ -69,8 +72,12 @@ final class QueryDispatcher extends Injectable implements QueryDispatcherInterfa
         if ($classAnnotations->has('Handler'))
         {
             $queryHandlerClass = $classAnnotations->get('Handler')->getArgument(0);
-            $this->handlers[$queryClass] = new $queryHandlerClass;
-            return $this->handlers[$queryClass];
+
+            if (class_exists($queryHandlerClass))
+            {
+                $this->handlers[$queryClass] = new $queryHandlerClass;
+                return $this->handlers[$queryClass];
+            }
         }
 
         if ($this->prefixQueryHandlerNamespace != null)

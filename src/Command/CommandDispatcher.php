@@ -48,6 +48,10 @@ final class CommandDispatcher extends Injectable implements CommandDispatcherInt
         {
             return Result::fail($ex->getMessage());
         }
+        catch (\Error $error)
+        {
+            return Result::fail($error->getMessage());
+        }
     }
 
     public function register(string $commandClass, string $commandHandlerClass): void
@@ -79,8 +83,12 @@ final class CommandDispatcher extends Injectable implements CommandDispatcherInt
         if ($classAnnotations->has('Handler'))
         {
             $commandHandlerClass = $classAnnotations->get('Handler')->getArgument(0);
-            $this->handlers[$commandClass] = new $commandHandlerClass;
-            return $this->handlers[$commandClass];
+
+            if (class_exists($commandHandlerClass))
+            {
+                $this->handlers[$commandClass] = new $commandHandlerClass;
+                return $this->handlers[$commandClass];
+            }
         }
 
         if ($this->prefixCommandHandlerNamespace != null)

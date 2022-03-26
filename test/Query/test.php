@@ -1,7 +1,5 @@
 <?php
 
-namespace YG\Test\Query;
-
 use Phalcon\Di\FactoryDefault;
 use YG\Phalcon\Query\QueryDispatcher;
 use YG\Test\Query\Queries\GetUser;
