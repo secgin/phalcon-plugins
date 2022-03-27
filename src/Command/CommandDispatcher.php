@@ -2,6 +2,7 @@
 
 namespace YG\Phalcon\Command;
 
+use Phalcon\Annotations\Collection;
 use Phalcon\Di\Injectable;
 use YG\Phalcon\IResult;
 use YG\Phalcon\Result;
@@ -80,7 +81,7 @@ final class CommandDispatcher extends Injectable implements CommandDispatcherInt
 
         $annotations = $this->annotations->get($commandClass);
         $classAnnotations = $annotations->getClassAnnotations();
-        if ($classAnnotations->has('Handler'))
+        if ($classAnnotations instanceof Collection and $classAnnotations->has('Handler') === true)
         {
             $commandHandlerClass = $classAnnotations->get('Handler')->getArgument(0);
 

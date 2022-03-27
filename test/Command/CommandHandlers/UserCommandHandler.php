@@ -9,7 +9,7 @@ use YG\Test\Command\Commands\CreateUser;
 
 class UserCommandHandler extends AbstractCommandHandler
 {
-    public function createUsera(CreateUser $command): IResult
+    public function createUser(CreateUser $command): IResult
     {
         return Result::success('UserCommandHandler');
     }

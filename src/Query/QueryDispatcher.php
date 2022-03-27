@@ -2,6 +2,7 @@
 
 namespace YG\Phalcon\Query;
 
+use Phalcon\Annotations\Collection;
 use Phalcon\Di\Injectable;
 
 final class QueryDispatcher extends Injectable implements QueryDispatcherInterface
@@ -69,7 +70,7 @@ final class QueryDispatcher extends Injectable implements QueryDispatcherInterfa
 
         $annotations = $this->annotations->get($queryClass);
         $classAnnotations = $annotations->getClassAnnotations();
-        if ($classAnnotations->has('Handler'))
+        if ($classAnnotations instanceof Collection and $classAnnotations->has('Handler'))
         {
             $queryHandlerClass = $classAnnotations->get('Handler')->getArgument(0);
 

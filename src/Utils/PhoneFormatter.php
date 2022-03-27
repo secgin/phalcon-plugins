@@ -2,31 +2,21 @@
 
 namespace YG\Phalcon\Utils;
 
-class QueryParams
+class PhoneFormatter
 {
-    static public function get(?array $addParams, ?string $removeParams = null): array
+    static public function get(?string $data): string
     {
-        $params = $_GET;
-        unset($params['_url']);
+        if ($data == null)
+            return '';
 
-        if ($removeParams != null)
-        {
-            $arr = explode(',', $removeParams);
-            foreach ($arr as $param)
-                unset($params[$param]);
-        }
+        $num = preg_replace('/[^0-9]/', '', $data);
+        $len = strlen($num);
 
-        if ($addParams != null)
-        {
-            foreach ($addParams as $name => $value)
-                $params[$name] = $value;
-        }
+        if($len == 7) $num = preg_replace('/([0-9]{2})([0-9]{2})([0-9]{3})/', '$1 $2 $3', $num);
+        elseif($len == 8) $num = preg_replace('/([0-9]{3})([0-9]{2})([0-9]{3})/', '$1 - $2 $3', $num);
+        elseif($len == 9) $num = preg_replace('/([0-9]{3})([0-9]{2})([0-9]{2})([0-9]{2})/', '$1 - $2 $3 $4', $num);
+        elseif($len == 10) $num = preg_replace('/([0-9]{3})([0-9]{3})([0-9]{2})([0-9]{2})/', '0($1)$2 $3 $4', $num);
 
-        return $params;
-    }
-
-    static public function getCurrentUrl(): string
-    {
-        return $_REQUEST['_url'];
+        return $num;
     }
 }
