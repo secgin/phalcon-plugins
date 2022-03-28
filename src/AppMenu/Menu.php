@@ -1,6 +1,6 @@
 <?php
 
-namespace YG\Plugins\AppMenu;
+namespace YG\Phalcon\AppMenu;
 
 use Phalcon\Di\Injectable;
 use Phalcon\Tag;

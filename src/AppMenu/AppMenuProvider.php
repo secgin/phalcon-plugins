@@ -1,6 +1,6 @@
 <?php
 
-namespace YG\Plugins\AppMenu;
+namespace YG\Phalcon\AppMenu;
 
 use Phalcon\Di\DiInterface;
 use Phalcon\Di\ServiceProviderInterface;

@@ -1,5 +1,5 @@
 <?php
-namespace YG\Plugins\AppMenu;
+namespace YG\Phalcon\AppMenu;
 
 interface MenuInterface
 {
