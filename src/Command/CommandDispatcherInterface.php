@@ -2,7 +2,7 @@
 
 namespace YG\Phalcon\Command;
 
-use YG\Phalcon\IResult;
+use YG\Phalcon\ResultInterface;
 
 interface CommandDispatcherInterface
 {
@@ -11,9 +11,9 @@ interface CommandDispatcherInterface
      *
      * @param AbstractCommand $command
      *
-     * @return IResult
+     * @return ResultInterface
      */
-    public function dispatch(AbstractCommand $command): IResult;
+    public function dispatch(AbstractCommand $command): ResultInterface;
 
     /**
      * @param string $commandClass        Komut class adı namespace ile birlikte

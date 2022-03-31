@@ -4,10 +4,10 @@ namespace YG\Phalcon\Command;
 
 use Phalcon\Di\Injectable;
 use Phalcon\Mvc\ModelInterface;
-use YG\Phalcon\IResult;
+use YG\Phalcon\ResultInterface;
 
 /**
- * @method IResult handle(AbstractCommand $command)
+ * @method ResultInterface handle(AbstractCommand $command)
  */
 abstract class AbstractCommandHandler extends Injectable
 {

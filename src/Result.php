@@ -2,7 +2,7 @@
 
 namespace YG\Phalcon;
 
-final class Result implements IResult
+final class Result implements ResultInterface
 {
     private
         $success,
@@ -41,7 +41,7 @@ final class Result implements IResult
         return null;
     }
 
-    #region IResult
+    #region ResultInterface
     public function isSuccess(): bool
     {
         return $this->success;

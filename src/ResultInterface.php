@@ -2,7 +2,7 @@
 
 namespace YG\Phalcon;
 
-interface IResult
+interface ResultInterface
 {
     public function isSuccess(): bool;
 

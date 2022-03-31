@@ -4,7 +4,7 @@ namespace YG\Phalcon\Command;
 
 use Phalcon\Annotations\Collection;
 use Phalcon\Di\Injectable;
-use YG\Phalcon\IResult;
+use YG\Phalcon\ResultInterface;
 use YG\Phalcon\Result;
 
 final class CommandDispatcher extends Injectable implements CommandDispatcherInterface
@@ -28,7 +28,7 @@ final class CommandDispatcher extends Injectable implements CommandDispatcherInt
         $this->prefixCommandHandlerNamespace = $prefixCommandHandlerNamespace;
     }
 
-    public function dispatch(AbstractCommand $command): IResult
+    public function dispatch(AbstractCommand $command): ResultInterface
     {
         try
         {
