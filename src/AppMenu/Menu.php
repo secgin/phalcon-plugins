@@ -39,7 +39,7 @@ class Menu extends Injectable implements MenuInterface
             {
                 $menuItem = new MenuItem(
                     $title,
-                    $menu['url'] ?? null,
+                    $this->url->get($menu['url'] ?? null),
                     $menu['icon'] ?? null,
                     $menu['parameters'] ?? []);
 
@@ -49,7 +49,7 @@ class Menu extends Injectable implements MenuInterface
                     {
                         $subMenuItem = new MenuItem(
                             $subMenuTitle,
-                            $subMenu['url'] ?? null,
+                            $this->url->get($subMenu['url'] ?? null),
                             $subMenu['icon'] ?? null,
                             $subMenu['parameters'] ?? []
                         );
