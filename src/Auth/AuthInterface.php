@@ -18,5 +18,7 @@ interface AuthInterface
     public function loginWithRememberMe(): bool;
 
     public function hasPermission(string $authCode, int $authLevel, ?string $module = null): bool;
+
+    public function hasPermissionFromAnnotation(string $className, string $methodName, string $moduleName): bool;
 }
 

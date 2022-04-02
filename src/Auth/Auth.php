@@ -95,6 +95,43 @@ final class Auth extends Injectable implements AuthInterface
         return $this->authDataService->hasPermission($authCode, $authLevel, $module);
     }
 
+    public function hasPermissionFromAnnotation(string $className, string $methodName, string $moduleName): bool
+    {
+        $annotations = $this->annotations->get($className);
+        $methodAnnotations = $this->annotations->getMethod($className, $methodName);
+
+        if ($methodAnnotations->has('Public'))
+            return true;
+
+        if (!$this->auth->isLogin())
+            return false;
+
+        if (!$methodAnnotations->has('Private'))
+            return true;
+
+        $privateAnnotations = $methodAnnotations->get('Private');
+
+        $authLevel = 0;
+        if ($privateAnnotations->hasArgument(0))
+            $authLevel = $privateAnnotations->getArgument(0);
+
+        $authCode = null;
+        if ($privateAnnotations->hasArgument(1))
+            $authCode = $privateAnnotations->getArgument(1);
+        else
+        {
+            $classAnnotations = $annotations->getClassAnnotations();
+            if ($classAnnotations != null and $classAnnotations->has('Private'))
+            {
+                $classPrivateAnnotation = $classAnnotations->get('Private');
+                if ($classPrivateAnnotation->hasArgument(0))
+                    $authCode = $classPrivateAnnotation->getArgument(0);
+            }
+        }
+
+        return $authCode == null or $this->hasPermission($authCode, $authLevel, $moduleName);
+    }
+
     public function __get($propertyName)
     {
         if (array_key_exists($propertyName, $this->userInfo))
