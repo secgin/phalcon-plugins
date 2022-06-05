@@ -54,4 +54,6 @@ interface QueryBuilderInterface
      * @return RepositoryInterface|PaginationRepository
      */
     public function executeToPagination(int $page, int $limit): RepositoryInterface;
+
+    public function whereByArray(array $filters, $conditionType = 'and'): RepositoryInterface;
 }

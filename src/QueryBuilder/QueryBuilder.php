@@ -39,7 +39,7 @@ class QueryBuilder extends Injectable implements QueryBuilderInterface
         return $this;
     }
 
-    public function whereByArray(array $filters, $conditionType = 'and'): self
+    public function whereByArray(array $filters, $conditionType = 'and'): RepositoryInterface
     {
         $conditions = [];
         $bindParams = [];

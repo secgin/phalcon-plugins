@@ -17,20 +17,6 @@ class Menu extends Injectable implements MenuInterface
         array_push($this->menus, $menu);
     }
 
-    public function renderMainMenu(array $parameters = array()): string
-    {
-        $this->loadMenus();
-
-        $html = Tag::tagHtml('s-menu', $parameters);
-
-        foreach ($this->items as $menuItem)
-            $html .= $this->renderMenuItem($menuItem);
-
-        $html .= Tag::tagHtmlClose('s-menu');
-
-        return $html;
-    }
-
     private function loadMenus()
     {
         foreach ($this->menus as $moduleName => $menus)
@@ -81,60 +67,9 @@ class Menu extends Injectable implements MenuInterface
         }
     }
 
-
-    private function renderMenuItem(MenuItem $menuItem): string
+    public function getMenus(): array
     {
-        return count($menuItem->items) > 0
-            ? $this->renderDropDownMenuItem($menuItem)
-            : $this->renderLinkMenuItem($menuItem);
-    }
-
-    private function renderDropDownMenuItem(MenuItem $menuItem): string
-    {
-        $parameters = [
-            'title' => $menuItem->title
-        ];
-        if ($menuItem->active)
-            $parameters['dopen'] = '';
-
-        $parameters = array_merge($parameters, $menuItem->parameters);
-
-        $html = Tag::tagHtml('s-menu-dropdown', $parameters)
-            . Tag::tagHtml('i', ['class' => $menuItem->icon, 'slot' => 'icon'])
-            . Tag::tagHtmlClose('i');
-
-        foreach ($menuItem->items as $subMenu)
-        {
-            $html .= Tag::tagHtml('s-menu-link', ['href' => $subMenu->url]);
-
-            if ($subMenu->icon != '')
-                $html .= Tag::tagHtml('i', ['class' => $subMenu->icon, 'slot' => 'icon'])
-                    . Tag::tagHtmlClose('i');
-
-            $html .= $subMenu->title
-                . Tag::tagHtmlClose('s-menu-link');
-        }
-
-        $html .= Tag::tagHtmlClose('s-menu-dropdown');
-
-        return $html;
-    }
-
-    private function renderLinkMenuItem(MenuItem $menuItem): string
-    {
-        $parameters = [
-            'href' => $menuItem->url
-        ];
-
-        $html = Tag::tagHtml('s-menu-link', $parameters);
-
-        if ($menuItem->icon != '')
-            $html .= Tag::tagHtml('i', ['class' => $menuItem->icon, 'slot' => 'icon'])
-                . Tag::tagHtmlClose('i');
-
-        $html .= $menuItem->title
-            . Tag::tagHtmlClose('s-menu-link');
-
-        return $html;
+        $this->loadMenus();
+        return $this->items;
     }
 }
