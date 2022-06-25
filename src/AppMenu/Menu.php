@@ -3,11 +3,11 @@
 namespace YG\Phalcon\AppMenu;
 
 use Phalcon\Di\Injectable;
-use Phalcon\Tag;
 
 class Menu extends Injectable implements MenuInterface
 {
     private array $menus = [];
+    private array $sortedMenus = [];
 
     /** @var array|MenuItem[] */
     private $items = [];
@@ -19,6 +19,8 @@ class Menu extends Injectable implements MenuInterface
 
     private function loadMenus()
     {
+        $items = [];
+
         foreach ($this->menus as $moduleName => $menus)
         {
             foreach ($menus as $title => $menu)
@@ -53,23 +55,53 @@ class Menu extends Injectable implements MenuInterface
 
                 }
 
-                if (array_key_exists($menuItem->title, $this->items))
+                if (array_key_exists($menuItem->title, $items))
                 {
-                    if ($this->items[$menuItem->title]->icon == '')
-                        $this->items[$menuItem->title]->icon = $menuItem->icon;
-
                     foreach ($menuItem->items as $item)
-                        $this->items[$menuItem->title]->addSubMenu($item);
+                        $items[$menuItem->title]->addSubMenu($item);
                 }
                 else
-                    $this->items[$menuItem->title] = $menuItem;
+                    $items[$menuItem->title] = $menuItem;
             }
         }
+
+        $newItems = [];
+        foreach ($this->sortedMenus as $item)
+        {
+            $title = $item['title'];
+            $icon = $item['icon'] ?? '';
+
+            if (array_key_exists($title, $items))
+            {
+                if (array_key_exists($title, $newItems))
+                {
+                    foreach ($items[$title]->items as $subItem)
+                        $newItems[$title]->addSubMenu($subItem);
+                }
+                else
+                {
+                    $newItems[$title] = $items[$title];
+                    $newItems[$title]->icon = $icon;
+                }
+
+                unset($items[$title]);
+            }
+        }
+
+        foreach ($items as $tile => $item)
+            $newItems[$tile] = $item;
+
+        $this->items = $newItems;
     }
 
     public function getMenus(): array
     {
         $this->loadMenus();
         return $this->items;
+    }
+
+    public function setMenuSort(array $sortedMenus): void
+    {
+        $this->sortedMenus = $sortedMenus;
     }
 }

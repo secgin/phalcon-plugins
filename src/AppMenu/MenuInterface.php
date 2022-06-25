@@ -9,4 +9,6 @@ interface MenuInterface
      * @return array|MenuItem[]
      */
     public function getMenus(): array;
+
+    public function setMenuSort(array $sortedMenus): void;
 }
