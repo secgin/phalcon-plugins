@@ -4,10 +4,12 @@ namespace YG\Phalcon\Command;
 
 use Phalcon\Annotations\Collection;
 use Phalcon\Di\Injectable;
+use Phalcon\Events\EventsAwareInterface;
+use Phalcon\Events\ManagerInterface;
 use YG\Phalcon\ResultInterface;
 use YG\Phalcon\Result;
 
-final class CommandDispatcher extends Injectable implements CommandDispatcherInterface
+final class CommandDispatcher extends Injectable implements CommandDispatcherInterface, EventsAwareInterface
 {
 
     private array $handlers = [];
@@ -15,6 +17,11 @@ final class CommandDispatcher extends Injectable implements CommandDispatcherInt
     private array $handlerClasses = [];
 
     private ?string $prefixCommandHandlerNamespace = null;
+
+    /**
+     * @var ManagerInterface
+     */
+    protected $eventsManager;
 
 
     /**
@@ -39,11 +46,17 @@ final class CommandDispatcher extends Injectable implements CommandDispatcherInt
 
             $reflection = new \ReflectionClass($command);
             $commandClassShortName = ucfirst($reflection->getShortName());
-
             if (method_exists($commandHandler, $commandClassShortName))
-                return $commandHandler->$commandClassShortName($command);
+                $result = $commandHandler->$commandClassShortName($command);
+            else
+                $result = $commandHandler->handle($command);
 
-            return $commandHandler->handle($command);
+            if ($this->eventsManager and $result->isSuccess())
+                $this->eventsManager->fire('commandDispatcher:afterDispatch', $this, [
+                    'command' => $command,
+                    'result' => $result->getData()]);
+
+            return $result;
         }
         catch (\Exception $ex)
         {
@@ -107,5 +120,15 @@ final class CommandDispatcher extends Injectable implements CommandDispatcherInt
             return new $commandHandlerClassName;
 
         return null;
+    }
+
+    public function getEventsManager(): ?ManagerInterface
+    {
+        return $this->eventsManager;
+    }
+
+    public function setEventsManager(ManagerInterface $eventsManager): void
+    {
+        $this->eventsManager = $eventsManager;
     }
 }
