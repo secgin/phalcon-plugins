@@ -1,4 +1,5 @@
 .DS_Store
 .idea/*
+test/*
 vendor/*
 composer.lock
